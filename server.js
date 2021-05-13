@@ -1,9 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const dotEnv = require('dotenv');
+const { merge } = require('lodash');
 const { ApolloServer, gql } = require('apollo-server-express');
 
-const { tasks, users } = require('./constans');
+const { taskResolver, userResolver } = require('./resolvers');
+const typeDefs = require('./typeDefs');
 
 dotEnv.config();
 
@@ -14,38 +16,10 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-const typeDefs = gql(`
-    type Query {
-        greetings: [String!]
-        tasks: [Task!]
-    }
-    
-    type User {
-        id: ID!
-        name: String!
-        email: String!
-        tasks: [Task!]
-    }
-    
-    type Task {
-        id: ID!
-        name: String!
-        completed: Boolean!
-        user: User!
-    }
-`);
-
-const resolvers = {
-    Query: {
-        greetings: () => ['Hello Andrii', 'adress'],
-        tasks: () => tasks
-    },
-    Task: {
-        user: ({ userId }) => users.find(user => user.id === userId) // Field Level Resolver
-    }
-};
-
-const apolloServer = new ApolloServer({ typeDefs, resolvers });
+const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers: merge(taskResolver, userResolver)
+});
 
 apolloServer.applyMiddleware({ app, path: '/graphql' });
 
