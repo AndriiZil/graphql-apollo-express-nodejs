@@ -8,12 +8,18 @@ const typeDefs = gql`
 
   extend type Mutation {
     createTask(input: createTaskInput!): Task
+    updateTask(id: ID!, input: updateTaskInput): Task
+    deleteTask(id: ID!): Task
+  }
+  
+  input updateTaskInput {
+    name: String!
+    completed: Boolean!
   }
 
   input createTaskInput {
     name: String!
     completed: Boolean!
-    userId: ID!
   }
 
   type Task {
@@ -21,6 +27,8 @@ const typeDefs = gql`
     name: String!
     completed: Boolean!
     user: User!
+    createdAt: Date!
+    updatedAt: Date!
   }
 `;
 
