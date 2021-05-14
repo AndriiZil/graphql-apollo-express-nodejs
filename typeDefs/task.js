@@ -2,8 +2,18 @@ const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
   extend type Query {
-    tasks: [Task!]
+    tasks(cursor: String, limit: Int, sort: Int): TaskFeed!
     task(id: ID!): Task
+  }
+  
+  type TaskFeed {
+    taskFeed: [Task!]
+    pageInfo: PageInfo!
+  }
+  
+  type PageInfo {
+    nextPageCursor: String
+    hasNextPage: Boolean!
   }
 
   extend type Mutation {
